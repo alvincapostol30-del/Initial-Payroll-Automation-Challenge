@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 from openpyxl.styles import Font
 from openpyxl.styles import PatternFill
+from openpyxl.utils import get_column_letter
 
 
 workbook = Workbook()
@@ -104,6 +105,17 @@ with open("Input/employees.csv", newline="") as file:
 #Create timestamp for filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f"Output/Payroll_{timestamp}.xlsx"
+
+#auto fit columns
+for column in worksheet.columns:
+    max_length = 0
+    column_letter = get_column_letter(column[0].column)
+
+    for cell in column:
+        if cell.value is not None:
+            max_length = max(max_length, len(str(cell.value)))
+
+    worksheet.column_dimensions[column_letter].width = max_length + 2
 
 #save file 
 workbook.save(filename)
