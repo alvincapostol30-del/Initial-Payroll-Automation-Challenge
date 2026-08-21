@@ -117,6 +117,8 @@ for column in worksheet.columns:
 
     worksheet.column_dimensions[column_letter].width = max_length + 2
 
+worksheet.freeze_panes = "A2"
+
 #save file 
 workbook.save(filename)
 
