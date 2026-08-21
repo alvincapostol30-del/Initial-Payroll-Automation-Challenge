@@ -4,6 +4,7 @@ from datetime import datetime
 from openpyxl.styles import Font
 from openpyxl.styles import PatternFill
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 
 workbook = Workbook()
@@ -115,9 +116,33 @@ for column in worksheet.columns:
         if cell.value is not None:
             max_length = max(max_length, len(str(cell.value)))
 
-    worksheet.column_dimensions[column_letter].width = max_length + 2
+    extra_width = 2
+
+    if column_letter in ["D", "F", "G", "I"]:
+        extra_width = 6
+
+    worksheet.column_dimensions[column_letter].width = max_length + extra_width
 
 worksheet.freeze_panes = "A2"
+
+last_row = worksheet.max_row
+
+table = Table(
+    displayName="PayrollTable",
+    ref=f"A1:I{last_row}"
+)
+
+style = TableStyleInfo(
+    name="TableStyleMedium2",
+    showFirstColumn=False,
+    showLastColumn=False,
+    showRowStripes=True,
+    showColumnStripes=False
+)
+
+table.tableStyleInfo = style
+
+worksheet.add_table(table)
 
 #save file 
 workbook.save(filename)
